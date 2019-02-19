@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     profile_img: DataTypes.STRING
-  }, {});
+  }, {underscored:true});
   users.associate = function(models) {
     // associations can be defined here
   };
