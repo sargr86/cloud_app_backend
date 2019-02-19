@@ -11,16 +11,11 @@ let storage = multer.diskStorage({
     }
 });
 
-global.upload = multer({ storage: storage });
-
 
 global.uploadProfileImg = multer({
     storage: storage,
+    limits: { fileSize: 1 },
     fileFilter: function (req, file, cb) {
-        let ext = path.extname(file.originalname);
-
-        console.log(req.body)
-
         let filetypes = /jpeg|jpg|png/;
         let mimetype = filetypes.test(file.mimetype);
         let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
