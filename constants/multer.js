@@ -17,7 +17,9 @@ global.upload = multer({ storage: storage });
 global.uploadProfileImg = multer({
     storage: storage,
     fileFilter: function (req, file, cb) {
-        let ext = path.extname(file.originalname)
+        let ext = path.extname(file.originalname);
+
+        console.log(req.body)
 
         let filetypes = /jpeg|jpg|png/;
         let mimetype = filetypes.test(file.mimetype);
