@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const users_roles = sequelize.define('users_roles', {
     user_id: DataTypes.INTEGER,
     role_id: DataTypes.INTEGER
-  }, {});
+  }, {timestamps:false});
   users_roles.associate = function(models) {
     // associations can be defined here
   };
