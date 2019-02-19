@@ -1,0 +1,27 @@
+{
+  "name": "armenia42_final_backend",
+  "version": "3.0.0",
+  "description": "Armenia 42",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargr86/armenia42_final_backend.git"
+  },
+  "author": "Grigor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sargr86/armenia42_final_backend/issues"
+  },
+  "homepage": "https://github.com/sargr86/armenia42_final_backend#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-validator": "^5.3.1",
+    "multer": "^1.4.1",
+    "nodemon": "^1.18.10"
+  }
+}
