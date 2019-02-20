@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
     let data = req.body;
     let email = data.email.trim();
     let lang = data.lang;
-    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password'];
+    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password','id'];
 
     // Selecting an employee that has an email matching request one
     let user = await Users.findOne({
@@ -94,3 +94,43 @@ exports.login = async (req, res) => {
     })
 
 };
+
+
+
+/**
+ * Updates profile info
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.updateProfile = async (req, res) => {
+
+    let data = req.body;
+    let lang = data.lang;
+
+    uploadProfileImg(req, res, async (err) => {
+        // Gets file type validation error
+        if (req.fileTypeError) {
+            res.status(423).json(req.fileTypeError);
+        }
+
+        // Getting multer errors if any
+        else if (err) res.status(423).json(err);
+
+        // If file validation passed, heading to the request data validation
+        else {
+            // Getting validation result from express-validator
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json(errors.array()[0]);
+            }
+
+            // Cloning user object without id and language to build update fields
+            let {id, lang, ...fields} = data;
+
+            await to(Users.update(fields, {where: {id: data.id}}), res)
+        }
+    })
+
+
+}
