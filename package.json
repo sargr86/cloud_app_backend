@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/sargr86/armenia42_final_backend#readme",
   "dependencies": {
+    "@vitalets/google-translate-api": "github:vitalets/google-translate-api",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",

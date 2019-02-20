@@ -12,6 +12,7 @@ global.server = require('http').createServer(app);
 
 require('./directories');
 require('./multer');
+require('./helpers');
 
 // Express Validator
 const {check, body, query, validationResult} = require('express-validator/check');

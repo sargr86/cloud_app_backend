@@ -1,0 +1,1 @@
+global.translateHelper = require('../helpers/translate');

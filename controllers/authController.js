@@ -8,6 +8,7 @@ require('../constants/sequelize');
  */
 exports.register = async (req, res) => {
     let data = req.body;
+    let lang = data.lang;
 
     uploadProfileImg(req, res, async (err) => {
 
@@ -32,7 +33,15 @@ exports.register = async (req, res) => {
             let originalPass = data.password;
             data.password = bcrypt.hashSync(originalPass, 10);
 
-            await Users.create(data);
+            // Getting the translations of user first and last names
+            let firstName = await translateHelper(data['first_name_' + lang], lang, 'first_name');
+            let lastName = await translateHelper(data['last_name_' + lang], lang, 'last_name');
+
+            // Merging translated names & descriptions with the request object
+            let merged = {...data, ...firstName, ...lastName};
+
+
+            await Users.create(merged);
 
             // Saving the original password again to request for authenticating the user at once
             data.password = originalPass;
