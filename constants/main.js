@@ -7,7 +7,7 @@ global.bodyParser = require('body-parser');
 global.cors = require('cors');
 global.postMaxSize = 50;
 global.jwt = require('jsonwebtoken');
-global.port = 3000;
+global.port = process.env.port || 3000;
 global.server = require('http').createServer(app);
 
 require('./directories');
