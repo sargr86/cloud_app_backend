@@ -1,7 +1,5 @@
 require('../constants/sequelize');
 
-let help = require('../helpers/index');
-
 /**
  * Registers a user in the database
  * @param req
@@ -11,16 +9,15 @@ let help = require('../helpers/index');
 exports.register = async (req, res) => {
     let data = req.body;
 
-    uploadProfileImg(req, res, async (multerErr) => {
+    uploadProfileImg(req, res, async (err) => {
 
-        // Validating file size & type
-        let error = help.validateFile(req.file);
-        if (error) {
-            res.status(423).json(error);
+        // Gets file type validation error
+        if (req.fileTypeError) {
+            res.status(423).json(req.fileTypeError);
         }
 
         // Getting multer errors if any
-        else if (multerErr) res.status(423).json(multerErr);
+        else if (err) res.status(423).json(err);
 
         // If file validation passed, heading to the request data validation
         else {
@@ -84,8 +81,7 @@ exports.login = async (req, res) => {
 
 
     res.status(200).json({
-        token: jwt.sign(details
-            , 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
+        token: jwt.sign(details, 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
     })
 
 };

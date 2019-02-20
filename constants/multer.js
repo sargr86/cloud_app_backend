@@ -7,15 +7,27 @@ let storage = multer.diskStorage({
         cb(null, USERS_UPLOAD_FOLDER)
     },
     filename: function (req, file, cb) {
-
-        let ext = file.mimetype.split('/')[1]
-        cb(null, file.originalname) // + '-' + Date.now()+path.extname(file.originalname
+        cb(null, file.originalname) // already have got Date implemented in the name
     }
 });
 
 
 let upload = multer({
     storage: storage,
+    limits:{fileSize:UPLOAD_MAX_FILE_SIZE},
+    fileFilter: function (req, file, cb) {
+
+        let filetypes = /jpeg|jpg/;
+        let mimetype = filetypes.test(file.mimetype);
+        let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+
+        if (!mimetype && !extname) {
+            req.fileTypeError = "invalid_file_type";
+            return cb(null, false,req.fileTypeError)
+        }
+        cb(null, true);
+    }
 });
 global.uploadProfileImg = upload.single('profile_img_file');
 
