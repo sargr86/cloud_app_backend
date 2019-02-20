@@ -14,17 +14,8 @@ let storage = multer.diskStorage({
 });
 
 
-global.uploadProfileImg = multer({
+let upload = multer({
     storage: storage,
-    limits: { fileSize: UPLOAD_MAX_FILE_SIZE },
-    fileFilter: function (req, file, cb) {
-        let filetypes = /jpeg|jpg|png/;
-        let mimetype = filetypes.test(file.mimetype);
-        let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+});
+global.uploadProfileImg = upload.single('profile_img_file');
 
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb("Error: File upload only supports the following filetypes - " + filetypes);
-    }
-}).single('profile_img_file');

@@ -9,21 +9,48 @@ require('../constants/sequelize');
 exports.register = async (req, res) => {
     let data = req.body;
 
-    // Getting validation result from express-validator
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json(errors.array()[0]);
-    }
+    uploadProfileImg(req, res,  async(err) =>{
+        let file = req.file;
+        if(file){
+            if(file.size > UPLOAD_MAX_FILE_SIZE) res.status(423).json('limit_file_size');
+            else {
+                let filetypes = /jpeg|jpg/;
+                let mimetype = filetypes.test(file.mimetype);
+                let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+                if (!mimetype && !extname) {
+                    res.status(423).json('invalid_file_type');
+                }
+            }
 
-    // Saving the original password of user and hashing it to save in db
-    let originalPass = data.password;
-    data.password = bcrypt.hashSync(originalPass, 10);
+        }
+        else if(req.file){
 
-    await Users.create(data);
+        }
+        // Getting validation result from multer
+       else if (err) {
+            res.status(423).json(err.code.toLowerCase())
+        }
+        else {
 
-    data.password = originalPass;
+             // Getting validation result from express-validator
+             const errors = validationResult(req);
+             if (!errors.isEmpty()) {
+                 return res.status(422).json(errors.array()[0]);
+             }
 
-    this.login(req,res);
+             // Saving the original password of user and hashing it to save in db
+             let originalPass = data.password;
+             data.password = bcrypt.hashSync(originalPass, 10);
+
+             await Users.create(data);
+
+             data.password = originalPass;
+
+             this.login(req,res);
+         }
+    })
+
+
 };
 
 /**
