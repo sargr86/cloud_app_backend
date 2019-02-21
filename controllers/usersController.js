@@ -9,10 +9,11 @@ require('../constants/sequelize');
 exports.getUserById = async (req, res) => {
     let data = req.query;
     let lang = data.lang;
-    await to(Users.findOne({
+    let result = await to(Users.findOne({
         where: {id: data.id},
         attributes: ['id', 'email', 'gender', 'profile_img', `first_name_${lang}`, `last_name_${lang}`, 'birthday']
     }), res);
+    res.json(result)
 };
 
 /**
@@ -26,10 +27,11 @@ exports.getUsers = async (req, res) => {
     let lang = data.lang;
     let attributes = ['id', 'email', 'gender', 'profile_img', 'birthday'];
     attributes.push(fullName(`first_name_${lang}`, `last_name_${lang}`));
-    await to(Users.findAll({
+    let result = await to(Users.findAll({
         attributes: attributes,
         include: [{model: UsersStatuses, attributes: ['id', `name_${lang}`, 'name_en']}]
-    }),res)
+    }),res);
+    res.json(result)
 };
 
 /**
