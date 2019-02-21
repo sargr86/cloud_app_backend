@@ -26,7 +26,7 @@ exports.getUsers = async (req, res) => {
     let data = req.query;
     let lang = data.lang;
     let attributes = ['id', 'email', 'gender', 'profile_img', 'birthday'];
-    // attributes.push(fullName(`first_name_${lang}`, `last_name_${lang}`));
+    attributes.push(fullName(`first_name_${lang}`, `last_name_${lang}`));
     let result = await to(Users.findAll({
         attributes: attributes,
         include: [
