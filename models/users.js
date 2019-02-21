@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {underscored: true});
     users.associate = function (models) {
         users.belongsToMany(models.roles, {through: models.users_roles, foreignKey: 'user_id'})
+        users.belongsTo(models.users_statuses, {foreignKey: 'status_id'})
     };
     return users;
 };

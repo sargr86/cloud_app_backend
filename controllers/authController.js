@@ -37,9 +37,12 @@ exports.register = async (req, res) => {
             let firstName = await translateHelper(data['first_name_' + lang], lang, 'first_name');
             let lastName = await translateHelper(data['last_name_' + lang], lang, 'last_name');
 
+            // Getting active status id and appending it to user request data
+            let status = await UsersStatuses.findOne({name_en: 'active', attributes: ['id']});
+            data.status_id = status.toJSON()['id'];
+
             // Merging translated names & descriptions with the request object
             let merged = {...data, ...firstName, ...lastName};
-
 
             await Users.create(merged);
 
@@ -130,10 +133,13 @@ exports.updateProfile = async (req, res) => {
                 return res.status(422).json(errors.array()[0]);
             }
 
+
+
             // Cloning user object without id and language to build update fields
             let {id, lang, ...fields} = data;
 
-            await to(Users.update(fields, {where: {id: data.id}}), res)
+            let result = await to(Users.update(fields, {where: {id: data.id}}), res)
+            res.json(result)
         }
     })
 

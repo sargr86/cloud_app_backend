@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {timestamps:false});
   users_statuses.associate = function(models) {
     // associations can be defined here
+      users_statuses.belongsTo(models.users,{foreignKey:'id'})
   };
   return users_statuses;
 };
