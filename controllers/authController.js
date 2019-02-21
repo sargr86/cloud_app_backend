@@ -73,28 +73,33 @@ exports.login = async (req, res) => {
     let data = req.body;
     let email = data.email.trim();
     let lang = data.lang;
-    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password','id'];
+    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password', 'id'];
 
     // Selecting an employee that has an email matching request one
-    let user = await Users.findOne({
+    let user = await to(Users.findOne({
         attributes: attributes, where: {email: email},
         include: [
             {model: Roles}
         ]
-    });
-    if (!user) return;
+    }), res);
 
-    // Cloning users object without password and saving user full name
-    let {password, ...details} = user.toJSON();
-    let full_name = user[`first_name_${lang}`] + ' ' + user[`last_name_${lang}`];
+    if (!res.headersSent) {
+        // User is not active
+        if (!user) res.status(500).json({name: 'you_are_inactive_error'});
 
 
-    res.status(200).json({
-        token: jwt.sign(details, 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
-    })
+        // Cloning users object without password and saving user full name
+        let {password, ...details} = user.toJSON();
+        let full_name = user[`first_name_${lang}`] + ' ' + user[`last_name_${lang}`];
+
+
+        res.status(200).json({
+            token: jwt.sign(details, 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
+        })
+    }
+
 
 };
-
 
 
 /**
