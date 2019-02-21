@@ -76,29 +76,39 @@ exports.login = async (req, res) => {
     let data = req.body;
     let email = data.email.trim();
     let lang = data.lang;
-    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password', 'id'];
+    let attributes = [`first_name_${lang}`, `last_name_${lang}`, 'email', 'profile_img', 'password', 'id', 'status_id'];
+
+    // Active status selecting
+    let statusWhere = sequelize.where(sequelize.col('`users_status`.`name_en`'), 'active');
 
     // Selecting an employee that has an email matching request one
-    let user = await to(Users.findOne({
-        attributes: attributes, where: {email: email},
+    let user = await Users.findOne({
+        attributes: attributes,
         include: [
-            {model: Roles}
-        ]
-    }), res);
+            {model: UsersStatuses, attributes: ['name_en','id'],where:{statusWhere}},
+            {model: Roles, attributes: ['name_en','id']},
+        ],
+        where: {email: email}
+    }, res);
+
 
     if (!res.headersSent) {
+
         // User is not active
         if (!user) res.status(500).json({name: 'you_are_inactive_error'});
 
+        else {
+            // Cloning users object without password and saving user full name
+            let {password, ...details} = user.toJSON();
+            let full_name = user[`first_name_${lang}`] + ' ' + user[`last_name_${lang}`];
 
-        // Cloning users object without password and saving user full name
-        let {password, ...details} = user.toJSON();
-        let full_name = user[`first_name_${lang}`] + ' ' + user[`last_name_${lang}`];
+
+            res.status(200).json({
+                token: jwt.sign(details, 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
+            })
+        }
 
 
-        res.status(200).json({
-            token: jwt.sign(details, 'secretkey', {expiresIn: '8h'}), user_id: user.id, full_name: full_name
-        })
     }
 
 
@@ -132,7 +142,6 @@ exports.updateProfile = async (req, res) => {
             if (!errors.isEmpty()) {
                 return res.status(422).json(errors.array()[0]);
             }
-
 
 
             // Cloning user object without id and language to build update fields
