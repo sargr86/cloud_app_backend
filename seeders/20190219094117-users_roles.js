@@ -4,8 +4,8 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const user_id = await queryInterface.rawSelect('users', {
             where: {
-                first_name_en: 'Grigor',
-                last_name_en: 'Sargsyan'
+                first_name_en: 'John',
+                last_name_en: 'Doe'
             },
         }, ['id']);
 

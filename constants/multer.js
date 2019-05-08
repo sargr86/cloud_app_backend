@@ -1,7 +1,7 @@
 // Multer stuff
 global.multer = require('multer');
-global.UPLOAD_MAX_FILE_SIZE = 1024*1024;
-
+global.UPLOAD_MAX_FILE_SIZE = 1024 * 1024;
+let invalidFiles = [];
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, USERS_UPLOAD_FOLDER)
@@ -14,20 +14,24 @@ let storage = multer.diskStorage({
 
 let upload = multer({
     storage: storage,
-    limits:{fileSize:UPLOAD_MAX_FILE_SIZE},
+    limits: {fileSize: UPLOAD_MAX_FILE_SIZE},
     fileFilter: function (req, file, cb) {
-
         let filetypes = /jpeg|jpg/;
         let mimetype = filetypes.test(file.mimetype);
         let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
-
+        // console.log(file,mimetype, extname)
         if (!mimetype && !extname) {
-            req.fileTypeError = "invalid_file_type";
-            return cb(null, false,req.fileTypeError)
+            invalidFiles.push(file.originalname);
+            invalidFiles = [...new Set(invalidFiles)];
+            req.fileTypeError = {msg: "invalid_file_type", files: invalidFiles.join('<br>')};
+            return cb(null, false, req.fileTypeError)
+
         }
-        cb(null, true);
+        // invalidFiles = [];
+        return cb(null, false, true);
     }
 });
 global.uploadProfileImg = upload.single('profile_img_file');
+global.importFilesUpload = upload.array('imported_file', 10);
 
