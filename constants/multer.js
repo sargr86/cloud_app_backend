@@ -19,6 +19,8 @@ let upload = multer({
         let filetypes = /jpeg|jpg/;
         let mimetype = filetypes.test(file.mimetype);
         let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        invalidFiles = [];
+        console.log(req.files)
 
         // console.log(file,mimetype, extname)
         if (!mimetype && !extname) {
@@ -27,9 +29,9 @@ let upload = multer({
             req.fileTypeError = {msg: "invalid_file_type", files: invalidFiles.join('<br>')};
             return cb(null, false, req.fileTypeError)
 
+        } else {
+            return cb(null, false, true);
         }
-        // invalidFiles = [];
-        return cb(null, false, true);
     }
 });
 global.uploadProfileImg = upload.single('profile_img_file');
